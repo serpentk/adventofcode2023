@@ -1,4 +1,4 @@
-# usage: python3 day3_2.py input3.txt
+# usage: python3 day3_1.py testinput3.txt
 
 import re
 import sys
