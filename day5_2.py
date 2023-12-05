@@ -52,7 +52,6 @@ for m in maps:
         if s + l > prev:
             resranges.append((prev, s + l - prev))
 
-    resranges.sort()
     ranges = resranges
 
 print(min([x[0] for x in ranges]))
