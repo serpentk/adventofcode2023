@@ -110,9 +110,6 @@ start = loop.index((xmin, ystart))
 
 loop = loop[start:] + loop[:start]
 
-for y in range(ysize):
-    print(''.join([pipes_map[y][x] if (x, y) in loop else '.' for x in range(xsize)]))
-
 x1, y1 = loop[1]
 if x1 > xmin:
     side = 'l'
@@ -124,13 +121,8 @@ for x, y in loop:
     newside = get_side(side, pipes_map[y][x])
     n2 = get_neighbor(x, y, newside)
     to_add = {n for n in (n1, n2) if n not in loop_tiles}
-    #print('tile {} {} {} side {} -> {}, neibours {} {}, to add {}'.format(
-    #    x, y, pipes_map[y][x], side, newside, n1, n2, to_add))
     side = newside
     outside.update(to_add)
-
-for y in range(ysize):
-    print(''.join([pipes_map[y][x] if (x, y) in loop else ('O' if  (x, y) in outside else '.') for x in range(xsize)]))
 
 for y in range(ysize):
     for x in range(xsize):
@@ -141,10 +133,6 @@ for y in range(ysize):
                            if (i, j) not in loop_tiles]
             outside.update(neigborhood)
 
-
-for y in range(ysize):
-    print(''.join([pipes_map[y][x] if (x, y) in loop else ('O' if  (x, y) in outside else '.') for x in range(xsize)]))
-            
 checked = loop_tiles.union(outside)
 
 print(len([(x, y)
