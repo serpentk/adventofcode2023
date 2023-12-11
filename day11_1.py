@@ -1,19 +1,18 @@
 import sys
 
-space = []
 galaxies = []
 empty_rows = []
+rowlen = None
 for (i, line) in enumerate(sys.stdin):
-    print(line.strip())
-    space.append([c for c in line.strip()])
+    rowlen = len(line.strip())
     g = [j for j, c in enumerate(line) if c == '#']
     galaxies.extend([(i, j) for j in g])
     if len(g) == 0:
         empty_rows.append(i)
 
 empty_cols = []
-for j in range(len(space[0])):
-    if not any([row[j] == '#' for row in space]):
+for j in range(rowlen):
+    if not any([g[1] == j for g in galaxies]):
         empty_cols.append(j)
 
 s = 0
