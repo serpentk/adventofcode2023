@@ -6,26 +6,20 @@ for line in sys.stdin:
 
 def neighbors(x, y, dx, dy):
     res = []
-    if dx >= 0:
-        nbrs = [(x + d, y, dx + d, 0)
-                for d in range(4, 11)
-                if dx + d < 11 and x + d < len(blocks[0])]
+    if (x,y) == (0, 0) or dx:
+        nbrs = [(x, y + d, 0, 1)
+                for d in range(4, 11) if y + d < len(blocks)] + [
+                        (x, y + d, 0, -1)
+                        for d in range(-10, -3) if y + d >= 0]
         res.extend([n for n in nbrs if n not in visited])
-    if dx <= 0:
-        nbrs = [(x + d, y, dx + d, 0)
-                for d in range(-10, -3)
-                if dx + d > -11 and x + d >= 0]
+        
+    if (x,y) == (0, 0) or dy:
+        nbrs = [(x + d, y, -1, 0)
+                for d in range(-10, -3) if x + d >= 0] + [
+                        (x + d, y, 1, 0)
+                        for d in range(4, 11) if x + d < len(blocks[0])]
         res.extend([n for n in nbrs if n not in visited])
-    if dy >= 0:
-        nbrs = [(x, y + d, 0, dy + d)
-                for d in range(4, 11)
-                if dy + d < 11 and y + d < len(blocks)]
-        res.extend([n for n in nbrs if n not in visited])
-    if dy <= 0:
-        nbrs = [(x, y + d, 0, dy + d)
-                for d in range(-10, -3)
-                if dy + d > -11 and y + d >= 0]
-        res.extend([n for n in nbrs if n not in visited])
+
     return res
 
 visited = set()
@@ -36,7 +30,7 @@ actual = {
 }
 
 while actual:
-    if len(results) == 14: break
+    if len(results) == 2: break
     closest_v = min(actual, key=actual.get)
     nbs = neighbors(*closest_v)
     if (closest_v[0], closest_v[1]) == (len(blocks[0]) - 1, len(blocks) - 1):
