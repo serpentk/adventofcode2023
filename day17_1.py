@@ -4,36 +4,6 @@ blocks = []
 for line in sys.stdin:
     blocks.append([int(c) for c in line.strip()])
 
-def direction(p1, p2):
-    return (p2[0] - p1[0], p2[1] - p1[1])
-
-
-def allowed_directions(path):
-    directions = {(0, 1), (1, 0), (0, -1), (-1, 0)}
-    if len(path) > 3:
-        last_dir = direction(path[-1], path[-2])
-        if (last_dir == direction(path[-2], path[-3]) and
-            last_dir == direction(path[-3], path[-4])):
-            directions.remove(last_dir)
-            directions.remove((-last_dir[0], -last_dir[1]))
-    return directions
-        
-
-def allowed_next(path):
-    x, y = p[-1]
-    directions = allowed_directions(path)
-    allowed = []
-    if x > 0 and (-1, 0) in directions:
-        allowed.append((x - 1, y))
-    if y > 0 and (0, -1) in directions:
-        allowed.append((x, y - 1))
-    if x < len(blocks[0]) - 1 and (1, 0) in directions:
-        allowed.append((x + 1, y))
-    if y < len(blocks) - 1 and (0, 1) in directions:
-        allowed.append((x, y + 1))
-    return allowed
-
-
 def neighbors(x, y, dx, dy):
     res = []
     if dx >= 0 and (x + 1, y, dx + 1, 0) in all_v:
