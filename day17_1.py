@@ -52,8 +52,6 @@ all_v = {
     for y in range(len(blocks))
     for dy in range(max(y - len(blocks) + 1, -3), min(3, y) + 1)
     for dx in range(max(x - len(blocks[0]) + 1, -3), min(3, x) + 1)
-    # for dy in range(max(-y, -3), min(4, len(blocks) - y))
-    # for dx in range(max(-x, -3), min(4, len(blocks[0]) - x))
     if dx * dy == 0 and dx + dy != 0
 }
 
@@ -62,34 +60,21 @@ for dx in range(1, 4): all_v.remove((0, 0, -dx, 0))
 for dy in range(1, 4): all_v.remove((0, 0, 0, -dy))
 all_v.add((0, 0, 0, 0))
 
-#print(all_v)
-#print(sorted(list({(x[0], x[1]) for x in all_v})))
-#print(sorted(list(all_v)))
-actual = [
-    ((0, 0, 0, 0), 0)
-]
 actual = {
-    (0, 0, 0, 0): 0
+     (0, 0, 0, 0): 0
 }
-#print(neighbors(1, 1, 1, 0))
-#print({x for x in all_v if x[0] == 1 and x[1] == 0})
 
 while actual:
-    print(len(all_v), len(actual), len(results))
     if len(results) == 6: break
-    #closest_v, dist  = actual.pop()
     closest_v = min(actual, key=actual.get)
     nbs = neighbors(*closest_v)
-    #print(closest_v, nbs)
     if (closest_v[0], closest_v[1]) == (len(blocks[0]) - 1, len(blocks) - 1):
         results[closest_v] = actual[closest_v]
     for v in nbs:
-        # print(v)
         x, y, dx, dy = v
-        actual[v] = actual[closest_v] + blocks[y][x]
-        #actual.append((v, dist + blocks[y][x]))
-        #print('{}: {}'.format(v, actual[v]))
-    #actual.sort(key=lambda x: x[1], reverse=True)
+        dist = actual[closest_v] + blocks[y][x]
+        if v not in actual or actual[v] > dist: 
+            actual[v] = dist
     del actual[closest_v]
     all_v.remove(closest_v)
 
