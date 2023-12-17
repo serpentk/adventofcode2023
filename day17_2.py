@@ -23,18 +23,17 @@ def neighbors(x, y, dx, dy):
     return res
 
 visited = set()
-results = {}
 
 actual = {
      (0, 0, 0, 0): 0
 }
 
 while actual:
-    if len(results) == 2: break
     closest_v = min(actual, key=actual.get)
     nbs = neighbors(*closest_v)
     if (closest_v[0], closest_v[1]) == (len(blocks[0]) - 1, len(blocks) - 1):
-        results[closest_v] = actual[closest_v]
+        print(actual[closest_v])
+        break
     for v in nbs:
         x, y, dx, dy = v
         if dx:
@@ -53,5 +52,3 @@ while actual:
             actual[v] = dist
     del actual[closest_v]
     visited.add(closest_v)
-
-print(min(results.values()))

@@ -25,7 +25,6 @@ all_v = {
     if dx * dy == 0 and dx + dy != 0
 }
 
-results = {}
 for dx in range(1, 4): all_v.remove((0, 0, -dx, 0))
 for dy in range(1, 4): all_v.remove((0, 0, 0, -dy))
 all_v.add((0, 0, 0, 0))
@@ -35,11 +34,11 @@ actual = {
 }
 
 while actual:
-    if len(results) == 6: break
     closest_v = min(actual, key=actual.get)
     nbs = neighbors(*closest_v)
     if (closest_v[0], closest_v[1]) == (len(blocks[0]) - 1, len(blocks) - 1):
-        results[closest_v] = actual[closest_v]
+        print(actual[closest_v])
+        break
     for v in nbs:
         x, y, dx, dy = v
         dist = actual[closest_v] + blocks[y][x]
@@ -47,5 +46,3 @@ while actual:
             actual[v] = dist
     del actual[closest_v]
     all_v.remove(closest_v)
-
-print(min(results.values()))
