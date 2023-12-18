@@ -50,14 +50,12 @@ for line in sys.stdin:
 
 num_v = len(dug_cubes)
 min_x = min([x[0] for x in dug_cubes])
-max_x = max([x[0] for x in dug_cubes])
 min_y = min([x[1] for x in dug_cubes])
-max_y = max([x[1] for x in dug_cubes])
 
 dug_cubes = [(x - min_x, y - min_y) for (x, y) in dug_cubes]
-min_x = min([x[0] for x in dug_cubes])
+min_x = 0
 max_x = max([x[0] for x in dug_cubes])
-min_y = min([x[1] for x in dug_cubes])
+min_y = 0
 max_y = max([x[1] for x in dug_cubes])
 
 xs = sorted(list(set([p[0] for p in dug_cubes])))
