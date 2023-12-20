@@ -2,7 +2,7 @@ import sys
 import re
 from enum import IntEnum
 from collections import deque
-
+import math
 
 class Pulse(IntEnum):
     Low = 0
@@ -13,7 +13,14 @@ class System:
         self.pulses = deque()
         self.sent = {Pulse.Low: 0, Pulse.High: 0}
         self.modules = dict()
+        # Modules will be discovered after viewing drown graph
+        self.senders = ()
+        self.senders_data = {}
 
+    def set_senders(self, senders):
+        self.senders = senders
+        self.senders_data = {name: [] for name in self.senders}
+        
     def add_module(self, mod, connections):
         if mod.startswith('%'):
             newmod = FlipFlop(mod[1:], connections, self)
@@ -33,35 +40,22 @@ class System:
         return newmod.name
 
     def send_pulse(self, pulse, receiver, sender):
-        #if sender in('hn', 'fz', 'xf', 'mp', 'xn'):
-        if sender in('jn', 'fb', 'gp', 'jl'):
-            senders_data[sender][-1].append(int(pulse))
-            #print(self.modules[sender].show_state(), pulse)
+        if sender in self.senders:
+            self.senders_data[sender][-1].append(int(pulse))
         self.pulses.append((pulse, receiver, sender))
         self.sent[pulse] += 1
 
     def try_turn_machine_on(self):
+        for s in self.senders_data:
+            self.senders_data[s].append([])
         self.send_pulse(Pulse.Low, 'broadcaster', None)
         while self.pulses:
-            #print(self.show_state())
-            #print('....................................')
             pulse, receiver, sender = self.pulses.popleft()
             if receiver == 'rx' and pulse == Pulse.Low:
                 return True
-            #print('{} -{}-> {}'.format(sender or 'button', pulse, receiver))
             if receiver in self.modules:
                 self.modules[receiver].process_pulse(pulse, sender)
         return False
-
-    def get_stats(self):
-        return self.sent[Pulse.High] * self.sent[Pulse.Low]
-
-    def show_state(self):
-        return(
-            '\n'.join([m.show_state() for m in self.modules.values()] + [str(x) for x in [self.pulses, self.sent]]))
-        
-    
-button = System()
 
 
 class Module:
@@ -123,6 +117,7 @@ class Conjunction(Module):
         return('{}: {}'.format(self.name, self.get_recent_str()))
 
 
+button = System()
 f = open('graph.dot', 'w')
 f.write('digraph {\n')
     
@@ -137,26 +132,26 @@ for line in sys.stdin:
 
 f.write('}\n')
 f.close()
-    
-# presses = 0
-# machine_on = False
-# while not machine_on:
-#     presses += 1
-#     machine_on = button.try_turn_machine_on()
-senders = ('jn', 'fb', 'gp', 'jl')
-senders_data = {name: [] for name in senders}
+
+# Now view the drown graph.
+# Now I realize that we need Low pulse to be sent
+# by modules 'jn', 'fb', 'gp', 'jl' the same step.
+# Put them to button senders
+button.set_senders(('jn', 'fb', 'gp', 'jl'))
+
 for i in range(10000):
-    for s in senders_data:
-        senders_data[s].append([])
     button.try_turn_machine_on()
 
-    #print('------------------------', i)
+senders_cycles = {name: 0 for name in button.senders}
 
-# print(presses)
-
-for s in senders:
-    print('{}:-----------------------'.format(s))
-    for step, d in enumerate(senders_data[s]):
+for s in button.senders:
+    for step, d in enumerate(button.senders_data[s]):
         if 0 in d:
-            print(step + 1, d)
+            if senders_cycles[s]:
+                if senders_cycles[s] != step + 1 - senders_cycles[s]:
+                    print('It appears to be complicated...')
+                    break
+            else:
+                senders_cycles[s] = step + 1
 
+print(math.lcm(*senders_cycles.values()))
