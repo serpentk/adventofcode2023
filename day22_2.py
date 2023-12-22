@@ -54,8 +54,6 @@ for i, b in enumerate(bricks):
     b[2], b[5] = newz, newz + b[5] - b[2]
     mark_brick(b, data, i)
 
-s = 0
-
 children = {i: set() for i in range(len(bricks))}
 supported_by = {i: {j for j in range(i) if supports(bricks[j], bricks[i])}
                 for i in range(len(bricks))} 
@@ -77,9 +75,7 @@ for i in range(len(bricks) - 1, -1, -1):
     for c in cn:
         children[i].update(children[c])
 
-for i in range(len(bricks)):
-    to_fall = {c for c in children[i]
-               if all([(p == i or (p in children[i]) or (p in parents[i])) for p in parents[c]])}
-    s += len(to_fall)
-
+s = sum([len({c for c in children[i]
+              if all([(p == i or (p in children[i]) or (p in parents[i])) for p in parents[c]])})
+         for i in range(len(bricks))])
 print(s)
