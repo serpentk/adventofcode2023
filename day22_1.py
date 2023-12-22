@@ -12,12 +12,6 @@ def supports(b1, b2):
     """
     return b1[5] + 1 == b2[2] and match_xy(b1, b2)
 
-def can_support(b1, b2):
-    """
-    if b1 can support b2 (b2 can stand on b1)
-    """
-    return b2[2] >= b1[5] + 1 and match_xy(b1, b2)
-
 def mark_brick(b, data, label):
     for jx in range(b[0], b[3] + 1):
         for jy in range(b[1], b[4] + 1):
@@ -48,62 +42,26 @@ for iz in range(maxz + 1):
 
 for i, b in enumerate(bricks):
     mark_brick(b, data, i)
-
-    # print(data[jz][jy][jx])
-                # assert data[jz][jy][jx] is None
-                # data[jz][jy][jx] = i
-for d in data:
-    print(d)
                 
 for i, b in enumerate(bricks):
     newz = b[2]
     for z in range(b[2] - 1, 0, -1):
-        #print('z={}: data={}, {}'.format(z, data[z]))
         if all([data[z][y][x] is None for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1)]):
             newz = z
         else:
             break
-    print('Moving {} ({}) to {}'.format(b, i, newz))
     mark_brick(b, data, None)
     b[2], b[5] = newz, newz + b[5] - b[2]
     mark_brick(b, data, i)
 
-
-
-    
-    
-# bricks.sort(key=lambda x: x[5])
-# for b in bricks:    
-#     print(b)
-# print('------------------')
-
-# for i, b in enumerate(bricks):
-#     bottom = [b1 for b1 in bricks[:i] if can_support(b1, b)]
-#     if bottom:
-#         level = bottom[-1][5] + 1
-#     else:
-#         level = 1
-#     print('Brick {} to level {}'.format(b, level))
-#     b[2], b[5] = level, level + b[5] - b[2]
-# for b in bricks:    
-#      print(b)
-# print('------------------')
-
 s = 0
 bricks.sort(key=lambda x: x[2])
-for b in bricks:    
-     print(b)
-print('------------------')
 
 for i, b in enumerate(bricks):
-    print('{}: {}'.format(b, i))
     top = [b1 for b1 in bricks if supports(b, b1)]
     if (len(top) == 0 or
         all([len([b1 for b1 in bricks if supports(b1, t) and b1 != b]) > 0 for t in top])): 
-        
-        print('can do it')
-        print(b, i)
         s += 1
 
-print(len(bricks), s)
+print(s)
     
